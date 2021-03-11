@@ -7,9 +7,9 @@ Open CloudShell and paste in the following commands:
 ```
 curl -O https://raw.githubusercontent.com/ueberhund/ml-workshop-examples/main/cloud9-setup.yml
 
-aws cloudformation create-stack --stack-name C9-Observability-Workshop --template-body file://cloud9-cfn.yaml --capabilities CAPABILITY_NAMED_IAM
+aws cloudformation create-stack --stack-name AIML-Workshop --template-body file://cloud9-cfn.yaml --capabilities CAPABILITY_NAMED_IAM
 
-aws cloudformation wait stack-create-complete --stack-name C9-Observability-Workshop
+aws cloudformation wait stack-create-complete --stack-name AIML-Workshop
 
 echo -e "Cloud9 Instance is Ready!!\n\n"
 ```
