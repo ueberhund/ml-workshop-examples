@@ -205,3 +205,27 @@ create_solution_version_response = personalize.create_solution_version(
 )
 
 solution_version_arn = create_solution_version_response['solutionVersionArn']
+
+status = None
+max_time = time.time() + 3*60*60 # 3 hours
+while time.time() < max_time:
+    describe_solution_version_response = personalize.describe_solution_version(
+        solutionVersionArn = solution_version_arn
+    )
+    status = describe_solution_version_response["solutionVersion"]["status"]
+    print("SolutionVersion: {}".format(status))
+    
+    if status == "ACTIVE" or status == "CREATE FAILED":
+        break
+        
+    time.sleep(60)
+
+#Create a campaign
+create_campaign_response = personalize.create_campaign(
+    name = "airlines-metadata-campaign-"+suffix,
+    solutionVersionArn = solution_version_arn,
+    minProvisionedTPS = 2,    
+)
+
+campaign_arn = create_campaign_response['campaignArn']
+

@@ -109,3 +109,18 @@ deeparp_create_predictor_response=forecast.create_predictor(PredictorName=deepAR
                                                                         ]
                                                                        }
                                                  )
+
+while True:
+    status = forecast.describe_predictor(PredictorArn=deeparp_create_predictor_response['PredictorArn'])['Status']
+    print(status)
+    if status != 'ACTIVE' and status != 'CREATE_FAILED':
+        sleep(30)
+    else:
+        break
+
+#Generate a forecast
+# DeepAR+
+deeparp_forecastName = project+'_deeparp_algo_forecast'
+deeparp_create_forecast_response=forecast.create_forecast(ForecastName=deeparp_forecastName,
+                                                  PredictorArn=deeparp_arn)
+deeparp_forecast_arn = deeparp_create_forecast_response['ForecastArn']
