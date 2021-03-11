@@ -15,14 +15,14 @@ then
     exit
 fi
 
-if ! command -v python3 &> /dev/null 
-then 
+if ! command -v python3 &> /dev/null
+then
     echo "python3 could not be found"
     exit
 fi
 
-if ! command -v pip3 &> /dev/null 
-then 
+if ! command -v pip3 &> /dev/null
+then
     echo "pip3 could not be found"
     exit
 fi
@@ -59,9 +59,9 @@ EOF
 
 aws s3api put-bucket-policy --bucket ${BUCKET_NAME} --policy file://bucket-policy.json
 
-curl https://raw.githubusercontent.com/quankiquanki/skytrax-reviews-dataset/master/data/airline.csv --output airline.csv 
+curl https://raw.githubusercontent.com/quankiquanki/skytrax-reviews-dataset/master/data/airline.csv --output airline.csv
 pip3 install -r requirements.txt
-python3 process-airline-data.py 
+python3 process-airline-data.py
 
 #Data has the format ITEM_ID / USER_ID / TIMESTAMP / CABIN_TYPE / EVENT_VALUE / EVENT_RATING
 aws s3 cp airline-interactions.csv s3://${BUCKET_NAME}/input/airline-interactions.csv
@@ -70,3 +70,6 @@ aws s3 cp airline-interactions.csv s3://${BUCKET_NAME}/input/airline-interaction
 aws s3 cp airline-users.csv s3://${BUCKET_NAME}/input/airline-users.csv
 
 echo "Bucket location: ${BUCKET_NAME}"
+
+#Set up Amazon Personalize
+python3 personalize-config.py 

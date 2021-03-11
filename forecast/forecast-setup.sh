@@ -29,3 +29,6 @@ curl https://raw.githubusercontent.com/aws-samples/amazon-forecast-samples/maste
 aws s3 cp item-demand-time.csv s3://${BUCKET_NAME}/input/item-demand-time.csv
 
 echo "Bucket location: ${BUCKET_NAME}"
+
+#Set up Amazon Forecast
+python3 forecast-config.py ${REGION} s3://${BUCKET_NAME}/input/item-demand-time.csv
