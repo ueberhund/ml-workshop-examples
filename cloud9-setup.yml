@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Cloud9 For AI/ML Workshop
+
+Parameters:
+  C9StopTime:
+    Description:
+      The number of minutes until the running instance is shut down after the environment has last been used.
+    Type: Number
+    Default: 240
+
+  C9InstanceType:
+    Description:
+      The instance type of the new Amazon EC2 instance that AWS Cloud9 will launch for the development environment.
+    Type: String
+    Default: t3.medium
+
+Resources:
+  Cloud9Env:
+    Type: AWS::Cloud9::EnvironmentEC2
+    Properties:
+      Name: ai-ml-workshop
+      Description: 'IDE Workshop'
+      AutomaticStopTimeMinutes: !Ref C9StopTime
+      InstanceType: !Ref C9InstanceType
+  Cloud9Role:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: 'aimlworkshop-admin'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AdministratorAccess
+      Path: /
+  Cloud9InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      InstanceProfileName: 'aimlworkshop-profile'
+      Roles: [!Ref Cloud9Role]
