@@ -120,6 +120,7 @@ while True:
 
 #Generate a forecast
 # DeepAR+
+deeparp_arn = deeparp_create_predictor_response['PredictorArn']
 deeparp_forecastName = project+'_deeparp_algo_forecast'
 deeparp_create_forecast_response=forecast.create_forecast(ForecastName=deeparp_forecastName,
                                                   PredictorArn=deeparp_arn)

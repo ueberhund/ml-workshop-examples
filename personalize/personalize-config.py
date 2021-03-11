@@ -222,7 +222,7 @@ while time.time() < max_time:
 
 #Create a campaign
 create_campaign_response = personalize.create_campaign(
-    name = "airlines-metadata-campaign-"+suffix,
+    name = "airlines-metadata-campaign",
     solutionVersionArn = solution_version_arn,
     minProvisionedTPS = 2,    
 )
