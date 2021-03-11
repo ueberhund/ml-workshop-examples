@@ -1,10 +1,17 @@
 import boto3
+import time
+import json
+import sys
+
+interactions_data=sys.argv[1]
+users_data=sys.argv[2]
+role_arn=sys.argv[3]
 
 personalize = boto3.client(service_name='personalize')
 personalize_runtime = boto3.client(service_name='personalize-runtime')
 personalize_events = boto3.client(service_name='personalize-events')
 
-dataset_group_name = "airlines-dataset-group-" + suffix
+dataset_group_name = "airlines-dataset-group"
 
 create_dataset_group_response = personalize.create_dataset_group(
     name = dataset_group_name
@@ -111,17 +118,17 @@ create_metadata_dataset_response = personalize.create_dataset(
     datasetType = dataset_type,
     datasetGroupArn = dataset_group_arn,
     schemaArn = metadata_schema_arn,
-    name = "airlines-metadata-dataset-users-" + suffix
+    name = "airlines-metadata-dataset-users"
 )
 
 metadata_dataset_arn = create_metadata_dataset_response['datasetArn']
 
 #Import interactions data
 create_dataset_import_job_response = personalize.create_dataset_import_job(
-    jobName = "airlines-dataset-import-job-"+suffix,
+    jobName = "airlines-dataset-import-job",
     datasetArn = interactions_dataset_arn,
     dataSource = {
-        "dataLocation": "s3://{}/{}".format(bucket_name, interactions_filename)
+        "dataLocation": interactions_data
     },
     roleArn = role_arn
 )
@@ -130,10 +137,10 @@ dataset_import_job_arn = create_dataset_import_job_response['datasetImportJobArn
 
 #Import Users data
 create_metadata_dataset_import_job_response = personalize.create_dataset_import_job(
-    jobName = "airlines-users-metadata-dataset-import-job-"+suffix,
+    jobName = "airlines-users-metadata-dataset-import-job",
     datasetArn = metadata_dataset_arn,
     dataSource = {
-        "dataLocation": "s3://{}/{}".format(bucket_name, user_metadata_file)
+        "dataLocation": users_data
     },
     roleArn = role_arn
 )
@@ -185,7 +192,7 @@ while time.time() < max_time:
 recipe_arn = "arn:aws:personalize:::recipe/aws-user-personalization"
 
 create_solution_response = personalize.create_solution(
-    name = "airlines-user-personalization-solution-HPO-"+suffix,
+    name = "airlines-user-personalization-solution-HPO",
     datasetGroupArn = dataset_group_arn,
     recipeArn = recipe_arn,
     performHPO=True

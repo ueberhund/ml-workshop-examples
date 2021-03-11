@@ -30,5 +30,13 @@ aws s3 cp item-demand-time.csv s3://${BUCKET_NAME}/input/item-demand-time.csv
 
 echo "Bucket location: ${BUCKET_NAME}"
 
+#Create a role for Amazon Forecast
+aws iam create-role --role-name ForecastRole --assume-role-policy-document file://trust.json
+sleep 15
+
+#Wait for role to propagate
+aws iam attach-role-policy --role-name ForecastRole --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
+sleep 15
+
 #Set up Amazon Forecast
-python3 forecast-config.py ${REGION} s3://${BUCKET_NAME}/input/item-demand-time.csv
+python3 forecast-config.py ${REGION} s3://${BUCKET_NAME}/input/item-demand-time.csv arn:aws:iam::${ACCOUNT_ID}:role/ForecastRole

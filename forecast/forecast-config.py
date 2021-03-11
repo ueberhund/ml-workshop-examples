@@ -1,7 +1,16 @@
 import boto3
+import sys
+from time import sleep
 
 region=sys.argv[1]
 target_s3DataPath=sys.argv[2]
+role_arn=sys.argv[3]
+
+DATASET_FREQUENCY = "H" 
+TIMESTAMP_FORMAT = "yyyy-MM-dd hh:mm:ss"
+project = 'forecast_immersion_day'
+datasetName= project+'_ds'
+datasetGroupName= project +'_dsg'
 
 session = boto3.Session(region_name=region) 
 forecast = session.client(service_name='forecast') 

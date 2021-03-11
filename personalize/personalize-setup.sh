@@ -60,7 +60,7 @@ EOF
 aws s3api put-bucket-policy --bucket ${BUCKET_NAME} --policy file://bucket-policy.json
 
 curl https://raw.githubusercontent.com/quankiquanki/skytrax-reviews-dataset/master/data/airline.csv --output airline.csv
-pip3 install -r requirements.txt
+pip3 install -r requirements.txt --user
 python3 process-airline-data.py
 
 #Data has the format ITEM_ID / USER_ID / TIMESTAMP / CABIN_TYPE / EVENT_VALUE / EVENT_RATING
@@ -71,5 +71,13 @@ aws s3 cp airline-users.csv s3://${BUCKET_NAME}/input/airline-users.csv
 
 echo "Bucket location: ${BUCKET_NAME}"
 
+#Create a role for Amazon Forecast
+aws iam create-role --role-name PersonalizeRole --assume-role-policy-document file://trust.json
+sleep 15
+
+#Wait for role to propagate
+aws iam attach-role-policy --role-name PersonalizeRole --policy-arn arn:aws:iam::aws:policy/AmazonS3FullAccess
+sleep 15
+
 #Set up Amazon Personalize
-python3 personalize-config.py 
+python3 personalize-config.py s3://${BUCKET_NAME}/input/airline-interactions.csv s3://${BUCKET_NAME}/input/airline-users.csv arn:aws:iam::${ACCOUNT_ID}:role/PersonalizeRole
